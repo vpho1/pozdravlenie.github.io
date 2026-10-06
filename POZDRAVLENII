@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>С Юбилеем, Максим!</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(-45deg, #1a1a2e, #16213e, #0f3460, #533483, #2d1b4e, #1a1a2e);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .neon-border {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        .neon-border::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border: 3px solid transparent;
+            border-image: linear-gradient(45deg, #ff00ff, #00ffff, #ff00ff, #ffff00, #00ff00, #ff00ff) 1;
+            animation: neonPulse 3s ease-in-out infinite;
+        }
+
+        .neon-glow {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 4;
+            box-shadow: 
+                inset 0 0 60px rgba(255, 0, 255, 0.6),
+                inset 0 0 100px rgba(0, 255, 255, 0.4),
+                inset 0 0 150px rgba(255, 0, 255, 0.2);
+            animation: glowPulse 4s ease-in-out infinite alternate;
+        }
+
+        @keyframes neonPulse {
+            0%, 100% { filter: hue-rotate(0deg) brightness(1); opacity: 0.9; }
+            50% { filter: hue-rotate(180deg) brightness(1.5); opacity: 1; }
+        }
+
+        @keyframes glowPulse {
+            0% { 
+                box-shadow: 
+                    inset 0 0 60px rgba(255, 0, 255, 0.6),
+                    inset 0 0 100px rgba(0, 255, 255, 0.4),
+                    inset 0 0 150px rgba(255, 0, 255, 0.2);
+            }
+            100% { 
+                box-shadow: 
+                    inset 0 0 80px rgba(0, 255, 255, 0.7),
+                    inset 0 0 120px rgba(255, 0, 255, 0.5),
+                    inset 0 0 180px rgba(255, 255, 0, 0.3);
+            }
+        }
+
+        .corner {
+            position: fixed;
+            width: 120px;
+            height: 120px;
+            pointer-events: none;
+            z-index: 6;
+        }
+
+        .corner::before,
+        .corner::after {
+            content: '';
+            position: absolute;
+            background: linear-gradient(90deg, #00ffff, #ff00ff);
+            box-shadow: 0 0 10px #00ffff, 0 0 20px #ff00ff, 0 0 30px #00ffff;
+        }
+
+        .corner-tl { top: 15px; left: 15px; }
+        .corner-tl::before { width: 60px; height: 3px; top: 0; left: 0; }
+        .corner-tl::after { width: 3px; height: 60px; top: 0; left: 0; }
+
+        .corner-tr { top: 15px; right: 15px; }
+        .corner-tr::before { width: 60px; height: 3px; top: 0; right: 0; }
+        .corner-tr::after { width: 3px; height: 60px; top: 0; right: 0; }
+
+        .corner-bl { bottom: 15px; left: 15px; }
+        .corner-bl::before { width: 60px; height: 3px; bottom: 0; left: 0; }
+        .corner-bl::after { width: 3px; height: 60px; bottom: 0; left: 0; }
+
+        .corner-br { bottom: 15px; right: 15px; }
+        .corner-br::before { width: 60px; height: 3px; bottom: 0; right: 0; }
+        .corner-br::after { width: 3px; height: 60px; bottom: 0; right: 0; }
+
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .congratulations {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            opacity: 0;
+            transform: scale(0.7) translateY(30px);
+            transition: opacity 2s ease-in-out, transform 2s ease-in-out;
+            pointer-events: none;
+            padding: 40px 50px;
+            background: rgba(20, 10, 40, 0.55);
+            border-radius: 25px;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 
+                0 0 40px rgba(255, 0, 255, 0.5),
+                0 0 80px rgba(0, 255, 255, 0.3),
+                inset 0 0 30px rgba(255, 255, 255, 0.05);
+            max-width: 90%;
+        }
+
+        .congratulations.show {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+            pointer-events: auto;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, #ff00ff, #00ffff, #ffff00, #ff00ff);
+            background-size: 300% 100%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+            animation: textGlow 4s linear infinite;
+            filter: drop-shadow(0 0 15px rgba(255, 0, 255, 0.7));
+            letter-spacing: 2px;
+        }
+
+        @keyframes textGlow {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 300% 50%; }
+        }
+
+        p {
+            font-size: 1.5rem;
+            color: #ffffff;
+            line-height: 1.7;
+            max-width: 650px;
+            margin: 0 auto;
+            text-shadow: 
+                0 0 10px rgba(0, 255, 255, 0.8),
+                0 0 20px rgba(255, 0, 255, 0.5);
+            font-weight: 400;
+        }
+
+        .footer-credit {
+            position: fixed;
+            bottom: 12px;
+            right: 20px;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.35);
+            z-index: 20;
+            font-family: Arial, sans-serif;
+            letter-spacing: 0.5px;
+            transition: color 0.4s;
+        }
+
+        .footer-credit:hover {
+            color: rgba(0, 255, 255, 0.9);
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+        }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 2rem; }
+            p { font-size: 1.1rem; }
+            .congratulations { padding: 25px 20px; }
+            .corner { width: 70px; height: 70px; }
+            .corner::before { width: 35px; }
+            .corner::after { height: 35px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="neon-glow"></div>
+    <div class="neon-border"></div>
+
+    <div class="corner corner-tl"></div>
+    <div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div>
+    <div class="corner corner-br"></div>
+
+    <canvas id="fireworksCanvas"></canvas>
+
+    <div class="congratulations" id="congratsText">
+        <h1>Максим, с 25-летием!</h1>
+        <p>
+            Поздравляю тебя с юбилеем! Желаю, чтобы в жизни всё было хорошо, 
+            чтобы ты жил счастливо и никогда не болел. 
+            Пусть удача всегда сопутствует тебе, а мечты сбываются!
+        </p>
+    </div>
+
+    <div class="footer-credit">
+        Спасибо компании VPHO и CEO VPHO
+    </div>
+
+    <script>
+        const canvas = document.getElementById('fireworksCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let particles = [];
+        let rockets = [];
+
+        const gravity = 0.05;
+        const friction = 0.98;
+
+        const colors = [
+            '#FF1461', '#18FF92', '#5A87FF', '#FBF38C', 
+            '#FF9A00', '#FF00FF', '#00FFFF', '#FF4500',
+            '#ADFF2F', '#FF69B4', '#00FF7F', '#FFD700'
+        ];
+
+        class Rocket {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = canvas.height;
+                this.targetY = Math.random() * (canvas.height * 0.5);
+                this.speed = 8 + Math.random() * 4;
+                this.color = colors[Math.floor(Math.random() * colors.length)];
+                this.trail = [];
+            }
+
+            update() {
+                this.y -= this.speed;
+                this.trail.push({ x: this.x, y: this.y });
+                if (this.trail.length > 5) this.trail.shift();
+
+                if (this.y <= this.targetY) {
+                    this.explode();
+                    return false;
+                }
+                return true;
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.moveTo(this.trail[0].x, this.trail[0].y);
+                for (let i = 1; i < this.trail.length; i++) {
+                    ctx.lineTo(this.trail[i].x, this.trail[i].y);
+                }
+                ctx.strokeStyle = this.color;
+                ctx.lineWidth = 2;
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = this.color;
+                ctx.stroke();
+                ctx.shadowBlur = 0;
+
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, 2, 0, Math.PI * 2);
+                ctx.fillStyle = '#fff';
+                ctx.fill();
+            }
+
+            explode() {
+                const particleCount = 60 + Math.floor(Math.random() * 60);
+                const color2 = colors[Math.floor(Math.random() * colors.length)];
+                for (let i = 0; i < particleCount; i++) {
+                    const angle = Math.random() * Math.PI * 2;
+                    const speed = Math.random() * 6 + 2;
+                    const c = Math.random() > 0.5 ? this.color : color2;
+                    particles.push(new Particle(this.x, this.y, c, angle, speed));
+                }
+            }
+        }
+
+        class Particle {
+            constructor(x, y, color, angle, speed) {
+                this.x = x;
+                this.y = y;
+                this.vx = Math.cos(angle) * speed;
+                this.vy = Math.sin(angle) * speed;
+                this.color = color;
+                this.alpha = 1;
+                this.decay = 0.012 + Math.random() * 0.012;
+                this.gravity = 0.05;
+            }
+
+            update() {
+                this.vx *= friction;
+                this.vy *= friction;
+                this.vy += this.gravity;
+                this.x += this.vx;
+                this.y += this.vy;
+                this.alpha -= this.decay;
+                return this.alpha > 0;
+            }
+
+            draw() {
+                ctx.globalAlpha = this.alpha;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, 2.2, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.shadowBlur = 12;
+                ctx.shadowColor = this.color;
+                ctx.fill();
+                ctx.shadowBlur = 0;
+                ctx.globalAlpha = 1;
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            for (let i = rockets.length - 1; i >= 0; i--) {
+                if (!rockets[i].update()) {
+                    rockets.splice(i, 1);
+                } else {
+                    rockets[i].draw();
+                }
+            }
+
+            for (let i = particles.length - 1; i >= 0; i--) {
+                if (!particles[i].update()) {
+                    particles.splice(i, 1);
+                } else {
+                    particles[i].draw();
+                }
+            }
+
+            if (Math.random() < 0.06) {
+                rockets.push(new Rocket());
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+
+        setTimeout(() => {
+            document.getElementById('congratsText').classList.add('show');
+        }, 3000);
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    </script>
+</body>
+</html>
